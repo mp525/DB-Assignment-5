@@ -7,9 +7,9 @@ var mongo = require('mongodb');
 var bodyParser = require('body-parser')
 const Cors = require("cors");
 
-
 var indexRouter = require('./routes/index');
 var tweetsRouter = require('./routes/tweets');
+var redisRouter = require('./routes/redis');
 
 var app = express();
 
@@ -25,6 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/tweets', tweetsRouter);
+app.use('/redis', redisRouter);
 
 
 // catch 404 and forward to error handler
