@@ -28,39 +28,41 @@ router.get("/test", async function (req, res, next) {
 router.get("/datausa1", async function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    await client.connect();
+    client.get("datausa1", (error, datausa1)=>{
+      if(error) console.error(error);
+      if(datausa1 != null){
+        return res.json(JSON.parse(datausa1));
+      }
+    });
 
     const {data} = await axios.get("https://datausa.io/api/data?measures=Average%20Wage,Average%20Wage%20Appx%20MOE&drilldowns=Detailed%20Occupation")
-    res.json(data)
-    await client.connect();
     await client.set("datausa1", JSON.stringify(data), {
-        EX: 10,
+      EX: 10,
     });
+    
+    res.json(data)
+    
 });
 
-/* GET top 10 hashtags. */
-router.get("/hashtags", function (req, res, next) {
+router.get("/datausa1/split", async function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  var result1;
-  MongoClient.connect(url, async function (err, db) {
-    if (err) throw err;
-    var dbo = db.db("tweets");
-    result1 = await dbo
-      .collection("tweet")
-      .aggregate([
-        { $match: {} },
-        { $unwind: "$entities.hashtags" },
-        { $group: { _id: "$entities.hashtags.text", count: { $count: {} } } },
-        { $sort: { count: -1 } },
-        { $limit: 10 },
-      ])
-      .toArray(function (err, result) {
-        if (err) throw err;
-        result1 = result;
-        res.send(result);
-        db.close();
-      });
+  await client.connect();
+  /* client.get("datausa1", (error, datausa1)=>{
+    if(error) console.error(error);
+    if(datausa1 != null){
+      return res.json(JSON.parse(datausa1));
+    }
+  }); */
+
+  const {data} = await axios.get("https://datausa.io/api/data?measures=Average%20Wage,Average%20Wage%20Appx%20MOE&drilldowns=Detailed%20Occupation")
+  /* await client.set("datausa1", JSON.stringify(data), {
+    EX: 10,
   });
+  
+  res.json(data) */
+  
 });
 
 module.exports = router;
