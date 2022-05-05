@@ -58,7 +58,7 @@ router.get("/datausa1/split", async function (req, res, next) {
 
   const {data} = await axios.get("https://datausa.io/api/data?measures=Average%20Wage,Average%20Wage%20Appx%20MOE&drilldowns=Detailed%20Occupation")
   /* await client.set("datausa1", JSON.stringify(data), {
-    EX: 10,
+    EX: 10, GET DATA, GET OBJECT, MAKE LISTS/OTHER TYPES, INSERT IN REDIS
   });
   
   res.json(data) */
