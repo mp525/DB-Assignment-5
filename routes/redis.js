@@ -30,18 +30,21 @@ router.get("/datausa1", async function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     await client.connect();
-    client.get("datausa1", (error, datausa1)=>{
+    const datausa1 = await client.get("datausa1", (error, datausa1)=>{
       if(error) console.error(error);
-      if(datausa1 != null){
-        return res.json(JSON.parse(datausa1));
-      }
     });
+
+    if(datausa1 != null){
+      console.log("got cache!");
+      await client.quit();
+      return res.json(JSON.parse(datausa1));
+    }
 
     const {data} = await axios.get("https://datausa.io/api/data?measures=Average%20Wage,Average%20Wage%20Appx%20MOE&drilldowns=Detailed%20Occupation")
     await client.set("datausa1", JSON.stringify(data), {
-      EX: 60,
+      EX: 1200,
     });
-    
+    console.log("cached!");
     res.json(data)
     await client.quit();
 
