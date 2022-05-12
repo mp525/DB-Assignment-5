@@ -42,7 +42,7 @@ router.get("/datausa1", async function (req, res, next) {
 
     const {data} = await axios.get("https://datausa.io/api/data?measures=Average%20Wage,Average%20Wage%20Appx%20MOE&drilldowns=Detailed%20Occupation")
     await client.set("datausa1", JSON.stringify(data), {
-      EX: 1200,
+      EX: 300,
     });
     console.log("cached!");
     res.json(data)
@@ -68,7 +68,7 @@ router.get("/datausa1/split", async function (req, res, next) {
 
    for (let i = 0; i < list.length; i++) {
      await client.lPush("datausa1list", JSON.stringify(list[i]), {
-       EX:60,
+       EX:300,
      });
    }
    
